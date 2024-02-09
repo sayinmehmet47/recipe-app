@@ -15,7 +15,7 @@
         Manage Recipe <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li><a href="#">To Shopping List</a></li>
+        <li><a href="#" (click)="onAddToShoppingList()">To Shopping List</a></li>
         <li><a href="#">Edit Recipe</a></li>
         <li><a href="#">Delete Recipe</a></li>
       </ul>
@@ -27,8 +27,8 @@
     {{ recipe.description }}
   </div>
 </div>
-<div class="row">
+<div class="row" *ngFor="let ingredient of recipe.ingredients">
   <div class="col-xs-12">
-    Ingredients
+    {{ ingredient.name }} ({{ ingredient.amount }})
   </div>
 </div>
