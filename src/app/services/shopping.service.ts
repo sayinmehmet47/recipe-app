@@ -15,7 +15,7 @@ export class ShoppingService {
   }
 
   onAddIngredients(ingredients: Ingredient[]) {
-    ingredients.push(...ingredients);
+    this.ingredients.push(...ingredients);
   }
 
   constructor() {}

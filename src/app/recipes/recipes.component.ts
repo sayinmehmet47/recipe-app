@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { RecipeService } from '../services/recipe.service';
-import { Recipe } from './recipe.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-recipes',
@@ -8,11 +7,5 @@ import { Recipe } from './recipe.model';
   styleUrls: ['./recipes.component.css'],
 })
 export class RecipesComponent {
-  constructor(private recipeService: RecipeService) {}
-  onRecipeSelect(recipe: Recipe) {
-    this.recipeService.onRecipeSelect(recipe);
-  }
-  get selectedRecipe() {
-    return this.recipeService.selectedRecipe;
-  }
+  constructor(private route: ActivatedRoute) {}
 }

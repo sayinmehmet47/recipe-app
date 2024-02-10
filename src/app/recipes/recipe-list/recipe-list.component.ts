@@ -11,10 +11,6 @@ import { RecipeService } from '../../services/recipe.service';
 export class RecipeListComponent implements OnInit {
   constructor(private recipeService: RecipeService) {}
 
-  onRecipeSelect(recipe: Recipe) {
-    this.recipeService.onRecipeSelect(recipe);
-  }
-
   get recipes() {
     return this.recipeService.recipes;
   }
