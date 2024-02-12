@@ -12,4 +12,8 @@ export class ShoppingListComponent {
   get ingredients() {
     return this.shoppingService.ingredients;
   }
+
+  onEditItem(index: number) {
+    this.shoppingService.editStart.next(index);
+  }
 }

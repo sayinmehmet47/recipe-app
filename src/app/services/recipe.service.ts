@@ -10,16 +10,16 @@ export class RecipeService {
   recipes: Recipe[] = [
     new Recipe(
       1,
-      'A Test Recipe',
+      'Doner',
       'This is simply a test 1',
-      'https://upload.wikimedia.org/wikipedia/commons/1/15/Recipe_logo.jpeg',
+      'https://www.unicornsinthekitchen.com/wp-content/uploads/2022/11/Doner-kebab-sq.jpg',
       [new Ingredient('Meat', 1), new Ingredient('French Fries', 20)]
     ),
     new Recipe(
       2,
-      'A Test Recipe',
+      'Maklube',
       'This is simply a test 2',
-      'https://upload.wikimedia.org/wikipedia/commons/1/15/Recipe_logo.jpeg',
+      'https://i.ytimg.com/vi/IpUyWEXjnhU/maxresdefault.jpg',
       [new Ingredient('Buns', 2), new Ingredient('Meat', 1)]
     ),
   ];
@@ -28,5 +28,9 @@ export class RecipeService {
 
   getRecipeById(id: string): Recipe {
     return this.recipes.find((recipe) => recipe.id === Number(id));
+  }
+
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
   }
 }

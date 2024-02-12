@@ -7,6 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ShoppingService } from '../../services/shopping.service';
+import {
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { Ingredient } from '../../shared/ingredient.model';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -14,16 +21,57 @@ import { ShoppingService } from '../../services/shopping.service';
   styleUrls: ['./shopping-edit.component.css'],
 })
 export class ShoppingEditComponent implements OnInit {
-  @ViewChild('nameInput') nameInputRef: ElementRef;
-  @ViewChild('amountInput') amountInputRef: ElementRef;
+  shoppingForm: FormGroup;
+  editMode: boolean = false;
+  editedShoppingItemIndex: number;
+  editedShoppingItem: Ingredient;
 
-  constructor(private shoppingService: ShoppingService) {}
+  constructor(
+    private shoppingService: ShoppingService,
+    private fb: FormBuilder
+  ) {}
 
-  onAddItem() {
-    const name = this.nameInputRef.nativeElement.value;
-    const amount = this.amountInputRef.nativeElement.value;
-    const newIngredient = { name, amount };
-    this.shoppingService.onAddIngredient(newIngredient);
+  ngOnInit() {
+    this.shoppingForm = this.fb.group({
+      name: ['', Validators.required],
+      amount: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
+    });
+
+    this.shoppingService.editStart.subscribe((index) => {
+      this.editMode = true;
+      this.editedShoppingItemIndex = index;
+      this.editedShoppingItem = this.shoppingService.getShoppingItem(index);
+      this.shoppingForm.patchValue({
+        name: this.editedShoppingItem.name,
+        amount: this.editedShoppingItem.amount,
+      });
+    });
   }
-  ngOnInit() {}
+
+  onFormSubmit() {
+    if (this.editMode) {
+      this.shoppingService.updateShoppingItem({
+        index: this.editedShoppingItemIndex,
+        name: this.shoppingForm.value.name,
+        amount: this.shoppingForm.value.amount,
+      });
+      this.editMode = false;
+      this.shoppingForm.reset();
+    } else {
+      this.shoppingService.onAddIngredient(this.shoppingForm.value);
+      this.shoppingForm.reset();
+    }
+  }
+
+  onClear() {
+    this.shoppingForm.reset();
+  }
+
+  onDelete() {
+    this.shoppingService.deleteItem(this.editedShoppingItemIndex);
+  }
+
+  getError(field): ValidationErrors {
+    return this.shoppingForm.controls[field].errors;
+  }
 }

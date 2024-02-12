@@ -1,1 +1,37 @@
-<p>recipe-edit works!</p>
+<form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" name="name" class="form-control" id="name" aria-describedby="name"
+            placeholder="Enter recipe name" formControlName="name">
+        <div class="text-danger" *ngIf="recipeForm.get('name').touched && recipeForm.get('name').errors">
+            Name is required</div>
+    </div>
+    <br>
+    <div>
+        <label for="description">Description</label>
+        <input type="text" class="form-control" id="description" placeholder="Description"
+            formControlName="description">
+    </div>
+    <br>
+    <div>
+        <label for="imagePath">Image Path</label>
+        <div class="text-danger" *ngIf="recipeForm.get('imagePath').touched && recipeForm.get('imagePath').errors">
+            Image path is required</div> <input type="text" class="form-control" id="imagePath" placeholder="Image Path"
+            formControlName="imagePath">
+
+    </div>
+    <br>
+    <div>
+        <label for="ingredients">Ingredients</label>
+        <select multiple class="form-control" id="ingredients" formControlName="ingredients">
+            <option>Meat</option>
+            <option>Rice</option>
+            <option>Tomato</option>
+            <option>Bread</option>
+            <option>Gurken</option>
+        </select>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary" [disabled]="!recipeForm.valid">Save Recipe</button>
+
+</form>
