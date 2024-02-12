@@ -20,18 +20,27 @@
             formControlName="imagePath">
 
     </div>
+    <hr>
+    <div>
+        <img [src]="recipeForm.get('imagePath').value" alt=" Recipe preview" width="450" height="350">
+    </div>
+
     <br>
     <div>
         <label for="ingredients">Ingredients</label>
-        <select multiple class="form-control" id="ingredients" formControlName="ingredients">
-            <option>Meat</option>
-            <option>Rice</option>
-            <option>Tomato</option>
-            <option>Bread</option>
-            <option>Gurken</option>
-        </select>
+        <div formArrayName="ingredients">
+            <div *ngFor="let ingredient of recipeForm.get('ingredients').value; let i = index">
+                <div style="margin-bottom: 9px; display: flex; gap: 6px;">
+                    <input type="text" class="form-control" style="flex: 2;" [value]="ingredient.name">
+                    <input type="number" class="form-control" style="flex: 1" [value]="ingredient.amount">
+                    <!-- You can optionally include a button to remove the ingredient -->
+                </div>
+            </div>
+        </div>
     </div>
     <br>
-    <button type="submit" class="btn btn-primary" [disabled]="!recipeForm.valid">Save Recipe</button>
+    <button class="btn btn-success" type="button" (click)="addIngredient()">Add Ingredient</button>
+
+
 
 </form>
