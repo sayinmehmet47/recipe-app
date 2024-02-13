@@ -15,32 +15,34 @@
     <br>
     <div>
         <label for="imagePath">Image Path</label>
-        <div class="text-danger" *ngIf="recipeForm.get('imagePath').touched && recipeForm.get('imagePath').errors">
-            Image path is required</div> <input type="text" class="form-control" id="imagePath" placeholder="Image Path"
-            formControlName="imagePath">
+        <input type="text" class="form-control" id="imagePath" placeholder="Image Path" formControlName="imagePath">
 
     </div>
-    <hr>
-    <div>
+    <div *ngIf="recipeForm.get('imagePath').value">
         <img [src]="recipeForm.get('imagePath').value" alt=" Recipe preview" width="450" height="350">
     </div>
-
+    <div class="text-danger" *ngIf="recipeForm.get('imagePath').touched && recipeForm.get('imagePath').errors">
+        Image path is required</div>
     <br>
-    <div>
-        <label for="ingredients">Ingredients</label>
-        <div formArrayName="ingredients">
-            <div *ngFor="let ingredient of recipeForm.get('ingredients').value; let i = index">
-                <div style="margin-bottom: 9px; display: flex; gap: 6px;">
-                    <input type="text" class="form-control" style="flex: 2;" [value]="ingredient.name">
-                    <input type="number" class="form-control" style="flex: 1" [value]="ingredient.amount">
-                    <!-- You can optionally include a button to remove the ingredient -->
+    <div formArrayName="ingredients">
+        <div *ngFor="let ingredientControls of controls; let i=index" [formGroupName]="i">
+            <div style="margin-bottom: 9px; display: flex; gap: 6px;">
+                <div>
+                    <input type="text" class="form-control" style="flex: 2;" formControlName="name">
+                    <div class="text-danger" *ngIf="isNameInvalid(i)">Name is required</div>
                 </div>
+                <div>
+                    <input type="number" class="form-control" style="flex: 1" formControlName="amount">
+                    <div class="text-danger" *ngIf="isAmountInvalid(i)">Amount is required</div>
+                </div>
+                <button class="btn btn-danger" type="button" (click)="removeIngredient(i)">X</button>
             </div>
         </div>
     </div>
+
     <br>
-    <button class="btn btn-success" type="button" (click)="addIngredient()">Add Ingredient</button>
-
-
-
+    <button class=" btn btn-success btn-sm" type="button" (click)="addIngredientGroup()">Add Ingredient</button>
+    <br>
+    <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 13px;"
+        [disabled]="!recipeForm.valid">{{editMode?"Update":"Add"}}</button>
 </form>

@@ -26,48 +26,105 @@ export class RecipeEditComponent {
       this.editMode = params['id'] != null;
       this.recipe = this.recipeService.getRecipeById(this.id);
     });
-
-    this.recipeForm = this.fb.group({
-      name: [this.recipe.name, Validators.required],
-      description: [this.recipe.description],
-      imagePath: [this.recipe.imagePath, Validators.required],
-      ingredients: this.fb.array([]),
-    });
-
     if (this.editMode) {
-      this.recipe.ingredients.forEach((ingredient) => {
-        (this.recipeForm.get('ingredients') as FormArray).push(
-          this.fb.group({
-            name: [ingredient.name, Validators.required],
-            amount: [ingredient.amount, Validators.required],
-          })
-        );
+      this.recipeForm = this.fb.group({
+        name: [this.recipe.name, Validators.required],
+        description: [this.recipe.description],
+        imagePath: [this.recipe.imagePath, Validators.required],
+        ingredients: this.fb.array([]),
+      });
+
+      if (this.recipe.ingredients) {
+        this.recipe.ingredients.forEach((ingredient) => {
+          (this.recipeForm.get('ingredients') as FormArray).push(
+            this.fb.group({
+              name: [ingredient.name, Validators.required],
+              amount: [
+                ingredient.amount,
+                [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)],
+              ],
+            })
+          );
+        });
+      }
+    } else {
+      this.recipeForm = this.fb.group({
+        name: ['', Validators.required],
+        description: [''],
+        imagePath: ['', Validators.required],
+        ingredients: this.fb.array([]),
       });
     }
   }
-  addIngredient() {
+  addIngredientGroup() {
     const ingredientsFormArray = this.recipeForm.get(
       'ingredients'
     ) as FormArray;
     ingredientsFormArray.push(
       this.fb.group({
-        name: [''],
-        amount: [''],
+        name: ['', Validators.required],
+        amount: [
+          '',
+          [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)],
+        ],
       })
     );
   }
+
+  get controls() {
+    return (<FormArray>this.recipeForm.get('ingredients')).controls;
+  }
   onSubmit() {
-    console.log(this.recipeForm.value);
-    this.recipeService.addRecipe(
-      new Recipe(
-        Math.random(),
-        this.recipeForm.get('name').value,
-        this.recipeForm.get('description').value,
-        this.recipeForm.get('imagePath').value,
-        this.recipeForm
-          .get('ingredients')
-          .value.map((ingredient) => new Ingredient(ingredient, 1))
+    const formData = this.recipeForm.value;
+    console.log(this.recipeForm.errors);
+    if (this.editMode) {
+      this.updateRecipe(formData);
+    } else {
+      this.addNewRecipe(formData);
+    }
+  }
+
+  private updateRecipe(formData: Recipe) {
+    const updatedRecipe = new Recipe(
+      Number(this.id),
+      formData.name,
+      formData.description,
+      formData.imagePath,
+      formData.ingredients
+    );
+    this.recipeService.updateRecipe(updatedRecipe);
+  }
+
+  isNameInvalid(index: number): boolean {
+    const ingredientFormArray = this.recipeForm.get('ingredients') as FormArray;
+    const ingredientFormGroup = ingredientFormArray.at(index) as FormGroup;
+    const nameFormControl = ingredientFormGroup.get('name');
+    return nameFormControl.invalid && nameFormControl.touched;
+  }
+
+  isAmountInvalid(index: number): boolean {
+    const ingredientFormArray = this.recipeForm.get('ingredients') as FormArray;
+    const ingredientFormGroup = ingredientFormArray.at(index) as FormGroup;
+    const amountFormControl = ingredientFormGroup.get('amount');
+    return amountFormControl.invalid && amountFormControl.touched;
+  }
+
+  private addNewRecipe(formData: Recipe) {
+    const newRecipe = new Recipe(
+      Math.random(),
+      formData.name,
+      formData.description,
+      formData.imagePath,
+      formData.ingredients.map(
+        (ingredient: Ingredient) =>
+          new Ingredient(ingredient.name, ingredient.amount)
       )
     );
+    this.recipeService.addRecipe(newRecipe);
+  }
+
+  removeIngredient(index: number): void {
+    const ingredientFormArray = this.recipeForm.get('ingredients') as FormArray;
+    ingredientFormArray.removeAt(index);
   }
 }

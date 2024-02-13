@@ -33,4 +33,18 @@ export class RecipeService {
   addRecipe(recipe: Recipe) {
     this.recipes.push(recipe);
   }
+
+  updateRecipe(updatedRecipe: Recipe) {
+    const recipe = this.recipes.find(
+      (recipe) => recipe.id === updatedRecipe.id
+    );
+    if (recipe != null) {
+      recipe.description = updatedRecipe.description;
+      recipe.imagePath = updatedRecipe.imagePath;
+      recipe.name = updatedRecipe.name;
+      recipe.ingredients = updatedRecipe.ingredients;
+    } else {
+      return;
+    }
+  }
 }
