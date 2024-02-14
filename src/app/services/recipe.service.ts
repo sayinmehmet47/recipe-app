@@ -7,22 +7,7 @@ import { Ingredient } from '../shared/ingredient.model';
 })
 export class RecipeService {
   selectedRecipe: Recipe;
-  recipes: Recipe[] = [
-    new Recipe(
-      1,
-      'Doner',
-      'This is simply a test 1',
-      'https://www.unicornsinthekitchen.com/wp-content/uploads/2022/11/Doner-kebab-sq.jpg',
-      [new Ingredient('Meat', 1), new Ingredient('French Fries', 20)]
-    ),
-    new Recipe(
-      2,
-      'Maklube',
-      'This is simply a test 2',
-      'https://i.ytimg.com/vi/IpUyWEXjnhU/maxresdefault.jpg',
-      [new Ingredient('Buns', 2), new Ingredient('Meat', 1)]
-    ),
-  ];
+  recipes: Recipe[];
 
   constructor() {}
 
