@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthResponse, AuthService } from '../../services/auth.service';
+import { AuthResponse, AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { NgForm } from '@angular/forms';
 

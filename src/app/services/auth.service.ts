@@ -1,22 +1,27 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { User } from '../auth/auth.user.model';
+import { Router } from '@angular/router';
 
 export interface AuthResponse {
   kind: string;
-  localId: string;
-  email: string;
-  displayName: string;
   idToken: string;
-  registered: boolean;
+  email: string;
+  refreshToken: string;
+  expiresIn: string;
+  localId: string;
+  registered?: boolean; //This property is optional
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private router: Router) {}
+  user = new BehaviorSubject<User>(null!);
+  private tokenExpirationTimer: any;
 
   signUp(body: {
     email: string;
@@ -25,10 +30,24 @@ export class AuthService {
   }) {
     return this.httpClient
       .post<AuthResponse>(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAgqfbZJq_cPk1BYQIsQqe1PPZlrGwHmkU',
-        body
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAgqfbZJq_cPk1BYQIsQqe1PPZlrGwHmkU',
+        {
+          email: body.email,
+          password: body.password,
+          returnSecureToken: true,
+        }
       )
-      .pipe(catchError(this.handleError));
+      .pipe(
+        catchError(this.handleError),
+        tap((resData) => {
+          this.handleAuthentication(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        })
+      );
   }
 
   login(body: {
@@ -38,10 +57,24 @@ export class AuthService {
   }) {
     return this.httpClient
       .post<AuthResponse>(
-        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAgqfbZJq_cPk1BYQIsQqe1PPZlrGwHmkU',
-        body
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAgqfbZJq_cPk1BYQIsQqe1PPZlrGwHmkU',
+        {
+          email: body.email,
+          password: body.password,
+          returnSecureToken: true,
+        }
       )
-      .pipe(catchError(this.handleError));
+      .pipe(
+        catchError(this.handleError),
+        tap((resData) => {
+          this.handleAuthentication(
+            resData.email,
+            resData.localId,
+            resData.idToken,
+            +resData.expiresIn
+          );
+        })
+      );
   }
 
   private handleError(errorRes: HttpErrorResponse) {
@@ -67,5 +100,57 @@ export class AuthService {
     }
 
     return throwError(errorMessage);
+  }
+  logout() {
+    this.user.next(null!);
+    this.router.navigate(['/auth']);
+    localStorage.removeItem('userData');
+    if (this.tokenExpirationTimer) {
+      clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
+  }
+  autoLogout(expirationDuration: number) {
+    this.tokenExpirationTimer = setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
+  }
+
+  autoLogin() {
+    const userData: {
+      email: string;
+      id: string;
+      _token: string;
+      _tokenExpirationDate: string;
+    } = JSON.parse(localStorage.getItem('userData')!);
+    if (!userData) {
+      return;
+    }
+    const parsedUserData = new User(
+      userData.email,
+      userData.id,
+      userData._token,
+      new Date(userData._tokenExpirationDate)
+    );
+
+    if (parsedUserData.token) {
+      this.user.next(parsedUserData);
+      this.autoLogout(
+        new Date(userData._tokenExpirationDate).getTime() - new Date().getTime()
+      );
+    }
+  }
+
+  private handleAuthentication(
+    email: string,
+    userId: string,
+    token: string,
+    expiresIn: number
+  ) {
+    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+    const user = new User(email, userId, token, expirationDate);
+    this.user.next(user);
+    this.autoLogout(expiresIn * 1000);
+    localStorage.setItem('userData', JSON.stringify(user));
   }
 }
