@@ -6,12 +6,17 @@ import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.com
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 import { RecipesResolver } from './resolvers/recipes.resolver';
+import { AuthComponent } from './auth/auth/auth.component';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: '/recipes',
     pathMatch: 'full',
+  },
+  {
+    path: 'auth',
+    component: AuthComponent,
   },
   {
     path: 'recipes',
