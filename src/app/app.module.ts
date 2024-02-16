@@ -17,7 +17,9 @@ import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './auth/auth.component';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
+import { ModalComponent } from './components/modal/modal.component';
+import { PlaceholderDirective } from './shared/placeholder/placeholder.directive';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
     RecipeEditComponent,
     AuthComponent,
     LoadingSpinnerComponent,
+    ModalComponent,
+    PlaceholderDirective,
   ],
   imports: [
     BrowserModule,

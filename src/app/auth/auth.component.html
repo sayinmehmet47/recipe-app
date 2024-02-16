@@ -1,13 +1,13 @@
+<ng-template appPlaceholder></ng-template>
 <div class="row">
     <div class="col-12 col-md-6 offset-3">
         <div *ngIf="isLoading" style="text-align: center;">
             <app-loading-spinner></app-loading-spinner>
         </div>
+        <!-- <app-modal [message]="error" *ngIf="error" (close)="onClose()"></app-modal>
         <div class="alert alert-danger mt-2" *ngIf="error">
             <p>{{ error }}</p>
-        </div>
-        <app-alert [message]="error" *ngIf="error" (close)="onHandleError()">
-        </app-alert>
+        </div> -->
         <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
             <form #authForm="ngForm" (submit)="onSubmit(authForm)" *ngIf="!isLoading">
                 <div class="form-group">

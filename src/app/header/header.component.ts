@@ -19,7 +19,7 @@ export class HeaderComponent {
   ) {}
 
   ngOnInit(): void {
-    this.authService.user.subscribe((user) => {
+    this.userSub = this.authService.user.subscribe((user) => {
       this.isAuthenticated = !!user;
     });
   }
