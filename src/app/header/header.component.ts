@@ -1,14 +1,28 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { DataStorageService } from '../services/data-storage.service';
 
+import { AuthService } from '../services/auth.service';
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-  constructor(private dataStorageService: DataStorageService) {}
-
+  private userSub: Subscription;
+  isAuthenticated = false;
   @Output() featureSelected = new EventEmitter<string>();
+
+  constructor(
+    private dataStorageService: DataStorageService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.authService.user.subscribe((user) => {
+      this.isAuthenticated = !!user;
+    });
+  }
 
   handleNavigationSelect(feature: string) {
     this.featureSelected.emit(feature);
@@ -20,9 +34,11 @@ export class HeaderComponent {
     });
   }
 
+  onLogout() {
+    this.authService.logout();
+  }
+
   fetchRecipes() {
-    this.dataStorageService.fetchRecipes().subscribe((recipes) => {
-      console.log(recipes);
-    });
+    this.dataStorageService.fetchRecipes().subscribe((recipes) => {});
   }
 }
