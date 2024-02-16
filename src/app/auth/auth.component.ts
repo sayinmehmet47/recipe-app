@@ -8,7 +8,7 @@ import { AuthResponse, AuthService } from '../services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ModalComponent } from '../components/modal/modal.component';
+import { ModalComponent } from '../shared/modal/modal.component';
 import { PlaceholderDirective } from '../shared/placeholder/placeholder.directive';
 
 @Component({
