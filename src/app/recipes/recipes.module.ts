@@ -11,6 +11,7 @@ import { AppRoutingModule } from '../app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { SharedModule } from '../shared/shared.module';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
