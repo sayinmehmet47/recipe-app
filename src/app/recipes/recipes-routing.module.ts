@@ -9,10 +9,16 @@ import { RecipeStartComponent } from './recipe-start/recipe-start.component';
 
 const routes: Routes = [
   {
-    path: 'recipes',
+    path: '',
     component: RecipesComponent,
     canActivate: [AuthGuard],
     children: [
+      {
+        path: '',
+        component: RecipeStartComponent,
+        pathMatch: 'full',
+        resolve: [RecipesResolver],
+      },
       {
         path: 'new',
         component: RecipeEditComponent,
@@ -20,12 +26,6 @@ const routes: Routes = [
       {
         path: ':id',
         component: RecipeDetailComponent,
-        resolve: [RecipesResolver],
-      },
-      {
-        path: '',
-        component: RecipeStartComponent,
-        pathMatch: 'full',
         resolve: [RecipesResolver],
       },
       {
