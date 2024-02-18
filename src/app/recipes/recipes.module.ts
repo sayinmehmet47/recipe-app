@@ -24,7 +24,6 @@ import { SharedModule } from '../shared/shared.module';
     RecipesRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    RecipesRoutingModule,
     SharedModule,
   ],
 })
