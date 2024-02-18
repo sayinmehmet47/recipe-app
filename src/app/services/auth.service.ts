@@ -4,6 +4,7 @@ import { BehaviorSubject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { User } from '../auth/auth.user.model';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment.development';
 
 export interface AuthResponse {
   kind: string;
@@ -30,7 +31,8 @@ export class AuthService {
   }) {
     return this.httpClient
       .post<AuthResponse>(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAgqfbZJq_cPk1BYQIsQqe1PPZlrGwHmkU',
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=' +
+          environment.apiUrl,
         {
           email: body.email,
           password: body.password,
@@ -57,7 +59,8 @@ export class AuthService {
   }) {
     return this.httpClient
       .post<AuthResponse>(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAgqfbZJq_cPk1BYQIsQqe1PPZlrGwHmkU',
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=' +
+          environment.apiUrl,
         {
           email: body.email,
           password: body.password,
