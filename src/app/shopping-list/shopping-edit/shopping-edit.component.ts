@@ -45,7 +45,6 @@ export class ShoppingEditComponent implements OnInit {
         this.editedShoppingItemIndex = index;
 
         this.store.select(selectIngredient).subscribe((editedItem) => {
-          console.log(editedItem);
           if (editedItem) {
             this.shoppingForm.patchValue({
               name: editedItem.name,

@@ -43,6 +43,16 @@ export const shoppingListReducer = createReducer(
       ingredients: [...state.shoppingList.ingredients, ...ingredients],
     },
   })),
+  on(addIngredient, (state, { name, amount }) => ({
+    ...state,
+    shoppingList: {
+      ...state.shoppingList,
+      ingredients: [
+        ...state.shoppingList.ingredients,
+        new Ingredient(name, amount),
+      ],
+    },
+  })),
   on(deleteItem, (state, { index }) => ({
     ...state,
     shoppingList: {
