@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ShoppingService } from '../../services/shopping.service';
+
 import {
   FormBuilder,
   FormGroup,
@@ -7,6 +7,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { Ingredient } from '../../shared/ingredient.model';
+import { AppState } from '../store/shopping-list.reducer';
+import { Store } from '@ngrx/store';
+import {
+  addIngredient,
+  deleteItem,
+  updateItem,
+} from '../store/shopping-list.action';
+import {
+  selectEditedIndex,
+  selectIngredient,
+} from '../store/shopping-list.selector';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -17,12 +29,9 @@ export class ShoppingEditComponent implements OnInit {
   shoppingForm: FormGroup;
   editMode: boolean = false;
   editedShoppingItemIndex: number;
-  editedShoppingItem: Ingredient;
+  editedShoppingItem: Observable<Ingredient>;
 
-  constructor(
-    private shoppingService: ShoppingService,
-    private fb: FormBuilder
-  ) {}
+  constructor(private store: Store<AppState>, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.shoppingForm = this.fb.group({
@@ -30,28 +39,45 @@ export class ShoppingEditComponent implements OnInit {
       amount: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
     });
 
-    this.shoppingService.editStart.subscribe((index) => {
-      this.editMode = true;
-      this.editedShoppingItemIndex = index;
-      this.editedShoppingItem = this.shoppingService.getShoppingItem(index);
-      this.shoppingForm.patchValue({
-        name: this.editedShoppingItem.name,
-        amount: this.editedShoppingItem.amount,
-      });
+    this.store.select(selectEditedIndex).subscribe((index) => {
+      if (index > -1) {
+        this.editMode = true;
+        this.editedShoppingItemIndex = index;
+
+        this.store.select(selectIngredient).subscribe((editedItem) => {
+          console.log(editedItem);
+          if (editedItem) {
+            this.shoppingForm.patchValue({
+              name: editedItem.name,
+              amount: editedItem.amount,
+            });
+          }
+        });
+      } else {
+        this.editMode = false;
+        this.shoppingForm.reset();
+      }
     });
   }
 
   onFormSubmit() {
     if (this.editMode) {
-      this.shoppingService.updateShoppingItem({
-        index: this.editedShoppingItemIndex,
-        name: this.shoppingForm.value.name,
-        amount: this.shoppingForm.value.amount,
-      });
+      this.store.dispatch(
+        updateItem({
+          index: this.editedShoppingItemIndex,
+          amount: this.shoppingForm.value.amount,
+          name: this.shoppingForm.value.name,
+        })
+      );
       this.editMode = false;
       this.shoppingForm.reset();
     } else {
-      this.shoppingService.onAddIngredient(this.shoppingForm.value);
+      this.store.dispatch(
+        addIngredient({
+          amount: this.shoppingForm.value.amount,
+          name: this.shoppingForm.value.name,
+        })
+      );
       this.shoppingForm.reset();
     }
   }
@@ -61,7 +87,11 @@ export class ShoppingEditComponent implements OnInit {
   }
 
   onDelete() {
-    this.shoppingService.deleteItem(this.editedShoppingItemIndex);
+    this.store.dispatch(
+      deleteItem({
+        index: this.editedShoppingItemIndex,
+      })
+    );
   }
 
   getError(field): ValidationErrors {
