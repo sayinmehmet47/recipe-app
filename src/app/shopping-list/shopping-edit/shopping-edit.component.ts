@@ -7,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Ingredient } from '../../shared/ingredient.model';
-import { AppState } from '../store/shopping-list.reducer';
 import { Store } from '@ngrx/store';
 import {
   addIngredient,
@@ -19,6 +18,7 @@ import {
   selectIngredient,
 } from '../store/shopping-list.selector';
 import { Observable } from 'rxjs';
+import * as fromApp from '../../store/app.reducer';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -31,7 +31,10 @@ export class ShoppingEditComponent implements OnInit {
   editedShoppingItemIndex: number;
   editedShoppingItem: Observable<Ingredient>;
 
-  constructor(private store: Store<AppState>, private fb: FormBuilder) {}
+  constructor(
+    private store: Store<fromApp.AppState>,
+    private fb: FormBuilder
+  ) {}
 
   ngOnInit() {
     this.shoppingForm = this.fb.group({

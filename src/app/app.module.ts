@@ -11,10 +11,10 @@ import { CoreModule } from './core.module';
 import { AuthModule } from './auth/auth.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { StoreModule } from '@ngrx/store';
-import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer';
 import { AsyncPipe } from '@angular/common';
 import { EffectsModule } from '@ngrx/effects';
 import { ShoppingListEffects } from './shopping-list/store/shopping-effect';
+import * as fromApp from './store/app.reducer';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
@@ -27,7 +27,7 @@ import { ShoppingListEffects } from './shopping-list/store/shopping-effect';
     AppRoutingModule,
     CoreModule,
     AuthModule,
-    StoreModule.forRoot({ shoppingList: shoppingListReducer }),
+    StoreModule.forRoot(fromApp.appReducer),
     EffectsModule.forRoot([ShoppingListEffects]),
   ],
 

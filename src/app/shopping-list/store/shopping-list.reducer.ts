@@ -74,7 +74,7 @@ export const shoppingListReducer = createReducer(
     shoppingList: {
       ...state.shoppingList,
       editedIndex: index,
-      selectedIngredient: state.shoppingList.ingredients[index],
+      selectedIngredient: { ...state.shoppingList.ingredients[index] },
     },
   }))
 );
