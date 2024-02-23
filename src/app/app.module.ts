@@ -13,8 +13,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { StoreModule } from '@ngrx/store';
 import { AsyncPipe } from '@angular/common';
 import { EffectsModule } from '@ngrx/effects';
-import { ShoppingListEffects } from './shopping-list/store/shopping-effect';
 import * as fromApp from './store/app.reducer';
+import { AuthEffects } from './auth/store/auth-effect';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
@@ -28,7 +28,7 @@ import * as fromApp from './store/app.reducer';
     CoreModule,
     AuthModule,
     StoreModule.forRoot(fromApp.appReducer),
-    EffectsModule.forRoot([ShoppingListEffects]),
+    EffectsModule.forRoot([AuthEffects]),
   ],
 
   bootstrap: [AppComponent],

@@ -22,17 +22,21 @@ export class RecipeDetailComponent implements OnInit {
   ) {}
 
   onAddToShoppingList() {
-    this.store.dispatch(
-      addIngredients({
-        ingredients: this.recipe.ingredients,
-      })
-    );
+    console.log(this.recipe.ingredients);
+    if (this.recipe.ingredients) {
+      this.store.dispatch(
+        addIngredients({
+          ingredients: this.recipe.ingredients,
+        })
+      );
+    }
   }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.recipeId = params['id'];
       this.recipe = this.recipeService.getRecipeById(this.recipeId);
+      console.log(this.recipe);
     });
   }
 }

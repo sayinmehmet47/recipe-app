@@ -1,8 +1,11 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import * as fromApp from '../store/app.reducer';
 import { DataStorageService } from '../services/data-storage.service';
+import * as fromAuthActions from '../auth/store/auth.actions';
 
-import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -15,13 +18,17 @@ export class HeaderComponent {
 
   constructor(
     private dataStorageService: DataStorageService,
-    private authService: AuthService
+
+    private store: Store<fromApp.AppState>
   ) {}
 
-  ngOnInit(): void {
-    this.userSub = this.authService.user.subscribe((user) => {
-      this.isAuthenticated = !!user;
-    });
+  ngOnInit() {
+    this.store
+      .select('auth')
+      .pipe(map((authState) => authState.user))
+      .subscribe((user) => {
+        this.isAuthenticated = !!user;
+      });
   }
 
   handleNavigationSelect(feature: string) {
@@ -35,7 +42,7 @@ export class HeaderComponent {
   }
 
   onLogout() {
-    this.authService.logout();
+    this.store.dispatch(new fromAuthActions.Logout());
   }
 
   fetchRecipes() {
