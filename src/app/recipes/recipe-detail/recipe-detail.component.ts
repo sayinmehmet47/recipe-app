@@ -22,7 +22,6 @@ export class RecipeDetailComponent implements OnInit {
   ) {}
 
   onAddToShoppingList() {
-    console.log(this.recipe.ingredients);
     if (this.recipe.ingredients) {
       this.store.dispatch(
         addIngredients({

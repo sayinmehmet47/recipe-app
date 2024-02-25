@@ -42,7 +42,7 @@ export class HeaderComponent {
   }
 
   onLogout() {
-    this.store.dispatch(new fromAuthActions.Logout());
+    this.store.dispatch(fromAuthActions.logout());
   }
 
   fetchRecipes() {

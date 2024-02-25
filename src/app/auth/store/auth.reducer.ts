@@ -1,6 +1,7 @@
 import { User } from '../auth.user.model';
 import * as AuthActions from './auth.actions';
 
+import { Action, createReducer, on } from '@ngrx/store';
 export interface State {
   user: User;
   authError: string;
@@ -13,43 +14,45 @@ const initialState: State = {
   loading: false,
 };
 
-export function authReducer(
-  state = initialState,
-  action: AuthActions.AuthActions
-) {
-  switch (action.type) {
-    case AuthActions.LOGIN:
-      const user = new User(
-        action.payload.email,
-        action.payload.userId,
-        action.payload.token,
-        action.payload.expirationDate
-      );
-      return {
-        ...state,
-        authError: null,
-        loading: false,
-        user,
-      };
-    case AuthActions.LOGOUT:
-      return {
-        ...state,
-        user: null,
-      };
-    case AuthActions.LOGIN_START:
-      return {
-        ...state,
-        user: null,
-        loading: true,
-      };
-    case AuthActions.LOGIN_FAIL:
-      return {
-        ...state,
-        user: null,
-        authError: action.payload,
-        loading: false,
-      };
-    default:
-      return state;
-  }
+const _authReducer = createReducer(
+  initialState,
+
+  on(AuthActions.loginStart, AuthActions.signupStart, (state) => ({
+    ...state,
+    authError: null,
+    loading: true,
+  })),
+
+  on(AuthActions.authenticateSuccess, (state, action) => ({
+    ...state,
+    authError: null,
+    loading: false,
+    user: new User(
+      action.email,
+      action.userId,
+      action.token,
+      action.expirationDate
+    ),
+  })),
+
+  on(AuthActions.authenticateFail, (state, action) => ({
+    ...state,
+    user: null,
+    authError: action.errorMessage,
+    loading: false,
+  })),
+
+  on(AuthActions.logout, (state) => ({
+    ...state,
+    user: null,
+  })),
+
+  on(AuthActions.clearError, (state) => ({
+    ...state,
+    authError: null,
+  }))
+);
+
+export function authReducer(state: State, action: Action) {
+  return _authReducer(state, action);
 }

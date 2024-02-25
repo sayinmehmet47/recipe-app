@@ -27,7 +27,6 @@ export class AuthComponent implements OnDestroy {
   private closeSub: Subscription;
 
   constructor(
-    private authService: AuthService,
     private componentFactoryResolver: ComponentFactoryResolver,
     private store: Store<fromApp.AppState>
   ) {}
@@ -46,9 +45,9 @@ export class AuthComponent implements OnDestroy {
     this.isLoading = true;
 
     if (this.isLoginMode) {
-      this.store.dispatch(new fromAuthAction.LoginStart({ email, password }));
+      this.store.dispatch(fromAuthAction.loginStart({ email, password }));
     } else {
-      this.authService.signUp({ email, password });
+      this.store.dispatch(fromAuthAction.signupStart({ email, password }));
     }
 
     form.reset();
@@ -56,7 +55,6 @@ export class AuthComponent implements OnDestroy {
 
   ngOnInit() {
     this.store.select('auth').subscribe((authState) => {
-      console.log(authState);
       this.isLoading = authState.loading;
       if (authState.authError) {
         this.error = authState.authError;
